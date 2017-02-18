@@ -62,17 +62,19 @@ public class AuthorService {
 			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR = ?");
 			prepareStatement.setString(1, author.getNameAuthor());
 			resultSet = prepareStatement.executeQuery();
-			if (resultSet.getRow()!=0){
-				setFlagMessage("El autor ya existe");
-				isInserted = false;
-			}
-			else{
+			
+			if(!resultSet.first()){
 				prepareStatement = conn.prepareStatement("INSERT INTO AUTORES(NOMBREAUTOR, FECHANACIMIENTO, IDLIBRO) VALUES(?,?,1)");
 				prepareStatement.setString(1, author.getNameAuthor());
 				prepareStatement.setObject(2, author.getDateOfBirth());
 				prepareStatement.executeUpdate();
 				setFlagMessage("El autor ha sido insertado");
 				isInserted = true;	
+			}
+			
+			else{
+				setFlagMessage("El autor ya existe");
+				isInserted = false;
 			}
 				
 		} catch (SQLException e) {
