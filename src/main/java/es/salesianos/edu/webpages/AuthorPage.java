@@ -1,3 +1,4 @@
+
 package es.salesianos.edu.webpages;
 
 import org.apache.wicket.extensions.markup.html.form.DateTextField;
@@ -11,12 +12,12 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import es.salesianos.edu.model.Author;
-import es.salesianos.edu.service.SimulacroService;
+import es.salesianos.edu.service.AuthorService;
 
 public class AuthorPage extends WebPage {
 
 	@SpringBean
-	SimulacroService simulacroService;
+	AuthorService authorService;
 
 	public AuthorPage() {
 
@@ -26,12 +27,12 @@ public class AuthorPage extends WebPage {
 			@Override
 			protected void onSubmit() {
 				super.onSubmit();
-				boolean isInserted = simulacroService.insert((Author) getModelObject());
+				boolean isInserted = authorService.insert((Author) getModelObject());
 				FeedbackMessage message;
 				if(isInserted){
-					message = new FeedbackMessage(this, "autor insertado", FeedbackMessage.INFO);
+					message = new FeedbackMessage(this, authorService.getFlagMessage(), FeedbackMessage.INFO);
 				} else {
-					message = new FeedbackMessage(this, "no se pudo insertar", FeedbackMessage.INFO);
+					message = new FeedbackMessage(this, authorService.getFlagMessage(), FeedbackMessage.INFO);
 				}
 				getFeedbackMessages().add(message);
 			}

@@ -11,6 +11,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.markup.html.link.BookmarkablePageLink;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -19,14 +20,14 @@ import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import es.salesianos.edu.model.Author;
-import es.salesianos.edu.service.SimulacroService;
+import es.salesianos.edu.service.AuthorService;
 
 public class ListAuthorPage extends WebPage {
 
 	private static final long serialVersionUID = -1935854748907274886L;
 
 	@SpringBean
-	SimulacroService service;
+	AuthorService service;
 
 	private static final Logger logger = LogManager.getLogger(ListAuthorPage.class.getName());
 
@@ -52,54 +53,45 @@ public class ListAuthorPage extends WebPage {
 
 	private void addForm() {
 		Form form = new Form("formListAuthor", new CompoundPropertyModel(new Author())) {
-			// @Override
-			// protected void onSubmit() {
-			// super.onSubmit();
-			// listAuthor.clear();
-			// PageParameters pageParameters = new PageParameters();
-			// pageParameters.add("currentSearchTerm", ((Author)
-			// getModelObject()).getNameAuthor());
-			// setResponsePage(ListAuthorPage.class, pageParameters);
-			// }
+			/*
+			 @Override
+			protected void onSubmit() {
+				super.onSubmit();
+				listAuthor.clear();
+				PageParameters pageParameters = new PageParameters();
+				pageParameters.add("currentSearchTerm", ((Author)
+				getModelObject()).getNameAuthor());
+				setResponsePage(ListAuthorPage.class, pageParameters);
+			}*/
 		};
 		Button okButton = new Button("okbutton") {
 			public void onSubmit() {
 				listAuthor.clear();
 				info("OK was pressed!");
-				Author author1 = new Author();
-				author1.setNameAuthor("uno");
-				author1.setDateOfBirth(new Date());
-				Author author2 = new Author();
-				author2.setNameAuthor("dos");
-				author2.setDateOfBirth(new Date());
-				Author author3 = new Author();
-				author3.setNameAuthor("tres");
-				author3.setDateOfBirth(new Date());
-				listAuthor.add(author1);
-				listAuthor.add(author2);
-				listAuthor.add(author3);
+				
+				
 			}
 		};
 		Button cancelButton = new Button("cancelbutton") {
 			public void onSubmit() {
 				listAuthor.clear();
 				info("cancel was pressed!");
-				Author author1 = new Author();
-				author1.setNameAuthor("one");
-				author1.setDateOfBirth(new Date());
-				Author author2 = new Author();
-				author2.setNameAuthor("two");
-				author2.setDateOfBirth(new Date());
-				Author author3 = new Author();
-				author3.setNameAuthor("three");
-				author3.setDateOfBirth(new Date());
-				listAuthor.add(author1);
-				listAuthor.add(author2);
-				listAuthor.add(author3);
+				
+				
 			}
 		};
+		Button returnButton = new Button("returnbutton") {
+			public void onSubmit() {
+				listAuthor.clear();
+				info("return was pressed!");
+				getRequestCycle().setResponsePage(HomePage.class);
+				
+			}
+		};
+		
 		form.add(okButton);
 		form.add(cancelButton);
+		form.add(returnButton);
 
 		form.add(new TextField("nameAuthor"));
 		add(form);
@@ -111,9 +103,9 @@ public class ListAuthorPage extends WebPage {
 	}
 
 	private void addListAuthorView() {
-		Author author = new Author();// service.newEntity()
-		author.setNameAuthor(currentNameSearch);
-		listAuthor = service.searchAll(author);
+		//Author author = new Author();// service.newEntity()
+		//author.setNameAuthor(currentNameSearch);
+		listAuthor = service.searchAll();
 		ListView listview = new ListView("author-group", listAuthor) {
 			@Override
 			protected void populateItem(ListItem item) {
