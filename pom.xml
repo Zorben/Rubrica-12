@@ -1,3 +1,4 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/maven-v4_0_0.xsd">
@@ -228,10 +229,6 @@
 
 		<plugins>
 
-			<!-- <plugin> <groupId>org.zeroturnaround</groupId> <artifactId>jrebel-maven-plugin</artifactId>
-				<executions> <execution> <id>generate-rebel-xml</id> <phase>process-resources</phase>
-				<goals> <goal>generate</goal> </goals> </execution> </executions> </plugin> -->
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -266,6 +263,23 @@
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.4.0.RC3</version>
 			</plugin>
+			
+			<!--  jrebel plugin (seems not working)
+			<plugin>
+			  <groupId>org.zeroturnaround</groupId>
+			  <artifactId>jrebel-maven-plugin</artifactId>
+			  <version>1.1.7</version>
+			  <executions>
+			    <execution>
+			      <id>generate-rebel-xml</id>
+			      <phase>process-resources</phase>
+			      <goals>
+			        <goal>generate</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+			</plugin>
+			-->
 
 
 		</plugins>

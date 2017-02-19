@@ -10,7 +10,7 @@
 				<input wicket:id="nameAuthor" class="form-control"
 					placeholder="Introduzca un nombre de un autor"></input> 
 				<input type="submit" class="btn btn-primary" value="Buscar"/>
-				<input type="submit" wicket:id="okbutton" value="OK" />
+				<input type="submit" wicket:id="allbutton" value="Mostrar todos" />
     			<input type="submit" wicket:id="cancelbutton" value="Cancelar" />
     			<input type="submit" wicket:id="returnbutton" value="Volver" />
 			</div>
@@ -21,10 +21,15 @@
 		<div class="alert-info" wicket:id="feedbackMessage">[feedbackMessage]</div>
 	</div>
 
-	<table border=2 width=75% style="margin-left:5%;font-family:bold"><th style="text-align:center">Nombre</th><th style="text-align:center">Fecha de nacimiento</th>
-	<div wicket:id="author-group" border=1>
-		<tr><td style="text-align:center"><span wicket:id="authorName" ></span></td><td style="text-align:center"><span wicket:id="dateOfBirth"></span></td></tr>
-	</div>
+	<table border=2 style="margin-left:5%;font-family:bold; width:70%"><th style="text-align:center;width:50%">Nombre</th><th style="text-align:center;width:50%">Fecha de nacimiento</th>
+		<div wicket:id="author-group" border=1>
+			<tr><td style="text-align:center"><span wicket:id="authorName" ></span></td><td style="text-align:center"><span wicket:id="dateOfBirth"></span></td></tr>
+		</div>
+		
+		<div>
+			<tr><td colspan=2 style="text-align:center"><span wicket:id="empty-list"></span></td></tr>
+		</div>
+		 
 	</table>
 </body>
 </html>

@@ -12,6 +12,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+
+import com.google.javascript.jscomp.Result;
+
 import es.salesianos.edu.connection.*;
 import es.salesianos.edu.model.Author;
 
@@ -65,7 +68,7 @@ public class AuthorService {
 			Connection conn = manager.open(jdbcUrl);
 			
 			try{
-				prepareStatement = conn.prepareStatement("INSERT INTO AUTORES(NOMBREAUTOR, FECHANACIMIENTO, IDLIBRO) VALUES(?,?,1)");
+				prepareStatement = conn.prepareStatement("INSERT INTO AUTORES(NOMBREAUTOR, FECHANACIMIENTO) VALUES(?,?)");
 				prepareStatement.setString(1, author.getNameAuthor());
 				prepareStatement.setObject(2, author.getDateOfBirth());
 				prepareStatement.executeUpdate();
@@ -118,7 +121,7 @@ public class AuthorService {
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
-		List AuthorsFoundList = Collections.emptyList();
+		List<Author> AuthorsFoundList = new ArrayList<Author>();
 		try {
 			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR = ?");
 			prepareStatement.setString(1, author.getNameAuthor());
@@ -147,7 +150,7 @@ public class AuthorService {
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
-		List AuthorsFoundList = Collections.emptyList();
+		List<Author> AuthorsFoundList = new ArrayList<Author>();
 		try {
 			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR like %?%");
 			prepareStatement.setString(1, author.getNameAuthor());
@@ -169,6 +172,57 @@ public class AuthorService {
 			close(resultSet, prepareStatement, conn);
 		}
 		return AuthorsFoundList;
+	}
+	
+	public List partialSearch(String authorName) {
+		logger.debug("realizando seleccion parcial");
+		ResultSet resultSet = null;
+		PreparedStatement prepareStatement = null;
+		Connection conn = manager.open(jdbcUrl);
+		List<Author> AuthorsFoundList = new ArrayList<Author>();
+		try {
+			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR like ?");
+			prepareStatement.setString(1, "%"+authorName+"%");
+			resultSet = prepareStatement.executeQuery();
+			while(resultSet.next()){
+				Author foundAuthor = new Author();
+				foundAuthor.setNameAuthor(resultSet.getString(2));
+				foundAuthor.setDateOfBirth(resultSet.getDate(3));
+				
+				AuthorsFoundList.add(foundAuthor);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}finally {
+			close(resultSet, prepareStatement, conn);
+		}
+		return AuthorsFoundList;
+	}
+	
+	public Author SearchById(int id) {
+		ResultSet resultSet = null;
+		PreparedStatement prepareStatement = null;
+		Connection conn = manager.open(jdbcUrl);
+		Author foundAuthor = null;
+		try {
+			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE IDAUTOR = ?");
+			prepareStatement.setInt(1, id);
+			resultSet = prepareStatement.executeQuery();
+			if(resultSet.next()){
+				foundAuthor=new Author();
+				foundAuthor.setNameAuthor(resultSet.getString(2));
+				foundAuthor.setDateOfBirth(resultSet.getDate(3));
+			}
+					
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}finally {
+			close(resultSet, prepareStatement, conn);
+		}
+		return foundAuthor;
 	}
 	
 	

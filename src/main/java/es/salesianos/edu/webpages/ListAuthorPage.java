@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Button;
@@ -33,12 +34,20 @@ public class ListAuthorPage extends WebPage {
 	private static final Logger logger = LogManager.getLogger(ListAuthorPage.class.getName());
 
 	private String currentNameSearch = null;
-
-	private List<Author> listAuthor = new ArrayList<Author>();
+	private static List<Author> listAuthor = new ArrayList<Author>();
 
 	public ListAuthorPage(PageParameters parameters) {
 		currentNameSearch = parameters.get("currentSearchTerm").toString();
+		
+		if (currentNameSearch.equals("ALL")){
+			listAuthor= service.searchAll();
+		}
+		else{
+			listAuthor= service.partialSearch(currentNameSearch);
+		}
+			
 		logger.debug("Cargando la pagina con el parametro " + currentNameSearch);
+		currentNameSearch=null;
 		initComponents();
 	}
 
@@ -54,30 +63,35 @@ public class ListAuthorPage extends WebPage {
 
 	private void addForm() {
 		Form form = new Form("formListAuthor", new CompoundPropertyModel(new Author())) {
-			/*
+			
 			 @Override
 			protected void onSubmit() {
 				super.onSubmit();
 				listAuthor.clear();
-				PageParameters pageParameters = new PageParameters();
-				pageParameters.add("currentSearchTerm", ((Author)
-				getModelObject()).getNameAuthor());
-				setResponsePage(ListAuthorPage.class, pageParameters);
-			}*/
+				if(((Author)getModelObject()).getNameAuthor()!=null){
+					PageParameters pageParameters = new PageParameters();
+					pageParameters.add("currentSearchTerm", ((Author)
+					getModelObject()).getNameAuthor());
+					setResponsePage(ListAuthorPage.class, pageParameters);
+				}
+			}
 		};
-		Button okButton = new Button("okbutton") {
+		Button allButton = new Button("allbutton") {
 			public void onSubmit() {
 				listAuthor.clear();
-				info("OK was pressed!");
-				
-				
+				info("Mostrando todos los autores");
+				PageParameters pageParameters = new PageParameters();
+				pageParameters.add("currentSearchTerm", "ALL");
+				setResponsePage(ListAuthorPage.class, pageParameters);
 			}
 		};
 		Button cancelButton = new Button("cancelbutton") {
 			public void onSubmit() {
 				listAuthor.clear();
-				info("cancel was pressed!");
-				
+				getRequestCycle().setResponsePage(ListAuthorPage.class);
+				FeedbackMessage message;
+				message = new FeedbackMessage(this, "Busqueda cancelada", FeedbackMessage.INFO);
+				getFeedbackMessages().add(message);
 				
 			}
 		};
@@ -85,12 +99,13 @@ public class ListAuthorPage extends WebPage {
 			public void onSubmit() {
 				listAuthor.clear();
 				info("return was pressed!");
+				//redirect to homepage
 				getRequestCycle().setResponsePage(HomePage.class);
 				
 			}
 		};
 		
-		form.add(okButton);
+		form.add(allButton);
 		form.add(cancelButton);
 		form.add(returnButton);
 
@@ -106,16 +121,23 @@ public class ListAuthorPage extends WebPage {
 	private void addListAuthorView() {
 		//Author author = new Author();// service.newEntity()
 		//author.setNameAuthor(currentNameSearch);
-		listAuthor = service.searchAll();
+		Label mensaje = new Label("empty-list", "Ningun registro disponible");
+		
+		if (listAuthor.isEmpty())
+			add(mensaje.setVisible(true));
+		else
+			add(mensaje.setVisible(false));
+		
 		ListView listview = new ListView("author-group", listAuthor) {
-			@Override
-			protected void populateItem(ListItem item) {
-				Author author = (Author) item.getModelObject();
-				item.add(new Label("authorName", author.getNameAuthor()));
-				item.add(new Label("dateOfBirth", author.getDateOfBirth()));
-			}
+				@Override
+				protected void populateItem(ListItem item) {
+					Author author = (Author) item.getModelObject();
+					item.add(new Label("authorName", author.getNameAuthor()));
+					item.add(new Label("dateOfBirth", author.getDateOfBirth()));
+				}	
 		};
 		add(listview);
+		
 	}
 
 
