@@ -1,5 +1,6 @@
 package es.salesianos.edu.webpages;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,7 @@ public class ListAuthorPage extends WebPage {
 
 	private String currentNameSearch = null;
 
-	private List listAuthor = Collections.emptyList();
+	private List<Author> listAuthor = new ArrayList<Author>();
 
 	public ListAuthorPage(PageParameters parameters) {
 		currentNameSearch = parameters.get("currentSearchTerm").toString();

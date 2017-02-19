@@ -33,8 +33,9 @@ public class AuthorService {
 	public void setFlagMessage(String flagMessage) {
 		this.flagMessage = flagMessage;
 	}
-			// FUNCION QUE CIERRA LA CONSULTA SQL
-			private static void close(PreparedStatement prepareStatement) {
+	
+	// FUNCION QUE CIERRA LA CONSULTA SQL
+	private static void close(PreparedStatement prepareStatement) {
 				try {
 					prepareStatement.close();
 				} catch (SQLException e) {
@@ -53,48 +54,74 @@ public class AuthorService {
 		}
 	
 	public boolean insert(Author author) {
-		logger.debug("realizando insercion");
-		ResultSet resultSet = null;
-		PreparedStatement prepareStatement = null;
-		Connection conn = manager.open(jdbcUrl);
+		
 		boolean isInserted;
-		try {
-			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR = ?");
-			prepareStatement.setString(1, author.getNameAuthor());
-			resultSet = prepareStatement.executeQuery();
+		
+		if(search(author).isEmpty()){
+			// No existe en la bd
+			logger.debug("realizando insercion");
+			ResultSet resultSet = null;
+			PreparedStatement prepareStatement = null;
+			Connection conn = manager.open(jdbcUrl);
 			
-			if(!resultSet.first()){
+			try{
 				prepareStatement = conn.prepareStatement("INSERT INTO AUTORES(NOMBREAUTOR, FECHANACIMIENTO, IDLIBRO) VALUES(?,?,1)");
 				prepareStatement.setString(1, author.getNameAuthor());
 				prepareStatement.setObject(2, author.getDateOfBirth());
 				prepareStatement.executeUpdate();
 				setFlagMessage("El autor ha sido insertado");
-				isInserted = true;	
+				isInserted = true;
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new RuntimeException(e);
+			}finally {
+				close(prepareStatement);
+				manager.close(conn);	
 			}
-			
-			else{
-				setFlagMessage("El autor ya existe");
-				isInserted = false;
+		}
+		
+		else{
+			setFlagMessage("El autor ya existe");
+			isInserted = false;
+		}
+		return isInserted;
+	}
+	
+	public List searchAll() {
+		logger.debug("realizando seleccion total");
+		ResultSet resultSet = null;
+		PreparedStatement prepareStatement = null;
+		Connection conn = manager.open(jdbcUrl);
+		List<Author> AuthorsFoundList = new ArrayList<Author>();
+		try {
+			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES");
+			resultSet = prepareStatement.executeQuery();
+			Author foundAuthor;
+			while(resultSet.next()){
+				foundAuthor = new Author();
+				foundAuthor.setNameAuthor(resultSet.getString(2));
+				foundAuthor.setDateOfBirth(resultSet.getDate(3));
+				AuthorsFoundList.add(foundAuthor);
 			}
 				
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}finally {
-			close(resultSet);
-			close(prepareStatement);	
+			close(resultSet, prepareStatement, conn);
 		}
-		manager.close(conn);
-		return isInserted;
+		return AuthorsFoundList;
 	}
-	public List searchAll() {
+	
+	public List search(Author author) {
 		logger.debug("realizando seleccion");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
 		List AuthorsFoundList = Collections.emptyList();
 		try {
-			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES");
+			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR = ?");
+			prepareStatement.setString(1, author.getNameAuthor());
 			resultSet = prepareStatement.executeQuery();
 			while(resultSet.next()){
 				Author foundAuthor = new Author();
@@ -110,11 +137,50 @@ public class AuthorService {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}finally {
-			close(resultSet);
-			close(prepareStatement);	
+			close(resultSet, prepareStatement, conn);
 		}
-		manager.close(conn);
-	
 		return AuthorsFoundList;
+	}
+	
+	public List partialSearch(Author author) {
+		logger.debug("realizando seleccion parcial");
+		ResultSet resultSet = null;
+		PreparedStatement prepareStatement = null;
+		Connection conn = manager.open(jdbcUrl);
+		List AuthorsFoundList = Collections.emptyList();
+		try {
+			prepareStatement = conn.prepareStatement("SELECT * FROM AUTORES WHERE NOMBREAUTOR like %?%");
+			prepareStatement.setString(1, author.getNameAuthor());
+			resultSet = prepareStatement.executeQuery();
+			while(resultSet.next()){
+				Author foundAuthor = new Author();
+				foundAuthor.setNameAuthor(resultSet.getString(2));
+				foundAuthor.setDateOfBirth(resultSet.getDate(3));
+				
+				AuthorsFoundList.add(foundAuthor);
+			}
+			
+			
+				
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}finally {
+			close(resultSet, prepareStatement, conn);
+		}
+		return AuthorsFoundList;
+	}
+	
+	
+	
+	/**
+	 * @param resultSet
+	 * @param prepareStatement
+	 * @param conn
+	 */
+	private void close(ResultSet resultSet, PreparedStatement prepareStatement, Connection conn) {
+		close(resultSet);
+		close(prepareStatement);
+		manager.close(conn);
 	}
 }
