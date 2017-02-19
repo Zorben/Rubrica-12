@@ -4,13 +4,23 @@
 <head>
 </head>
 <body>
+<style>
+	td, th{text-align:center}
+</style>
 
 	<div class="container">
 		
-		<div class="row">
-			<a wicket:id="linkAuthorForm">Insertar autor</a>
-			<a wicket:id="linkListAuthor">Listar autores</a>
-		</div>
+		
+		<table border=2 width=25%>
+			<tr><th colspan=2 >AUTORES</th></tr>
+			<tr><td><a wicket:id="linkAuthorForm">Insertar autor</a></td>
+				<td><a wicket:id="linkListAuthor">Listar autores</a></td>
+			</tr>
+			<tr><th colspan=2>LIBROS</th></tr>
+			<tr><td><a wicket:id="linkBookForm">Insertar libro</a></td>
+				<!--  <td><a wicket:id="linkListBook">Listar libros</a></td>-->
+			</tr>
+		</table>
 	</div>
 </body>
 </html>
