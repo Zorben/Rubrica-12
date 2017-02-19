@@ -37,20 +37,12 @@ public class ListAuthorPage extends WebPage {
 	private static List<Author> listAuthor = new ArrayList<Author>();
 
 	public ListAuthorPage(PageParameters parameters) {
-		currentNameSearch = parameters.get("currentSearchTerm").toString();
-		
-		if (currentNameSearch.equals("ALL")){
-			listAuthor= service.searchAll();
-		}
-		else{
-			listAuthor= service.partialSearch(currentNameSearch);
-		}
 			
-		logger.debug("Cargando la pagina con el parametro " + currentNameSearch);
-		currentNameSearch=null;
+		checkParametersAndFillListAuthor(parameters);
 		initComponents();
 	}
 
+	
 	public ListAuthorPage() {
 		initComponents();
 	}
@@ -67,21 +59,15 @@ public class ListAuthorPage extends WebPage {
 			 @Override
 			protected void onSubmit() {
 				super.onSubmit();
-				listAuthor.clear();
-				if(((Author)getModelObject()).getNameAuthor()!=null){
-					PageParameters pageParameters = new PageParameters();
-					pageParameters.add("currentSearchTerm", ((Author)
-					getModelObject()).getNameAuthor());
-					setResponsePage(ListAuthorPage.class, pageParameters);
-				}
+				checkAuthorNameAndFillParameters(this);
 			}
+
+			
 		};
 		Button allButton = new Button("allbutton") {
 			public void onSubmit() {
-				listAuthor.clear();
-				info("Mostrando todos los autores");
 				PageParameters pageParameters = new PageParameters();
-				pageParameters.add("currentSearchTerm", "ALL");
+				pageParameters.add("currentSearchType", "all");
 				setResponsePage(ListAuthorPage.class, pageParameters);
 			}
 		};
@@ -138,6 +124,43 @@ public class ListAuthorPage extends WebPage {
 		};
 		add(listview);
 		
+	}
+	
+	
+	
+	/*  
+	 * --------  FUNCIONES EXTRAIDAS/EMPAQUETADAS  ---------- 
+	 *
+	 */
+	
+	/**
+	 * @param parameters Comprueba los parametros y carga la lista de autores con lo que corresponda
+	 */
+	private void checkParametersAndFillListAuthor(PageParameters parameters) {
+		if (parameters.get("currentSearchType").toString().equals("all")){
+			listAuthor= service.searchAll();
+		}
+		else{
+			currentNameSearch = parameters.get("currentSearchTerm").toString();
+			listAuthor= service.partialSearch(currentNameSearch);
+		}
+		currentNameSearch=null;
+	}
+	
+	
+	/**
+	 *  Comprueba el nombre del autor a buscar por el usuario y recarga la pagina con los parametros, o muestra mensaje de error
+	 */
+	private void checkAuthorNameAndFillParameters(Form form) {
+		if(((Author)form.getModelObject()).getNameAuthor()!=null){
+			PageParameters pageParameters = new PageParameters();
+			pageParameters.add("currentSearchType", "find");
+			pageParameters.add("currentSearchTerm", ((Author)form.
+			getModelObject()).getNameAuthor());
+			setResponsePage(ListAuthorPage.class, pageParameters);
+		}
+		else
+			info("No ha introducido ningún nombre");
 	}
 
 
