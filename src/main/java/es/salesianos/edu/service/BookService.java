@@ -12,6 +12,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.javascript.jscomp.Result;
@@ -20,8 +21,13 @@ import es.salesianos.edu.connection.*;
 import es.salesianos.edu.model.Author;
 import es.salesianos.edu.model.Book;
 
+
+
 @Service
 public class BookService {
+	
+	@Autowired
+	AuthorService authorService;
 	
 	// DEFINE LA RUTA A LA BASE DE DATOS DESDE EN EL PROYECTO
 	private static final String jdbcUrl = "jdbc:h2:file:./src/main/resources/BibliotecaDB";
@@ -39,8 +45,7 @@ public class BookService {
 		this.flagMessage = flagMessage;
 	}
 	
-	@SpringBean
-	AuthorService authorService;
+	
 	
 	// FUNCION QUE CIERRA LA CONSULTA SQL
 	private static void close(PreparedStatement prepareStatement) {
@@ -90,7 +95,7 @@ public class BookService {
 		}
 		
 		else{
-			setFlagMessage("El libro ya existe");
+			setFlagMessage("El libro ya existe, introduzca otro");
 			isInserted = false;
 		}
 		return isInserted;
@@ -109,10 +114,10 @@ public class BookService {
 			Author authorOfBook;
 			while(resultSet.next()){
 				foundBook = new Book();
-				authorOfBook = new Author();
 				foundBook.setIsbn(resultSet.getInt(1));
 				foundBook.setTitle(resultSet.getString(2));
-				foundBook.setAuthor(authorService.SearchById(resultSet.getInt(3)));
+				authorOfBook = authorService.SearchById(resultSet.getInt(3));
+				foundBook.setAuthor(authorOfBook);
 				booksFoundList.add(foundBook);
 			}
 				
@@ -132,8 +137,8 @@ public class BookService {
 		Connection conn = manager.open(jdbcUrl);
 		List<Book> bookFoundList = new ArrayList<Book>();
 		try {
-			prepareStatement = conn.prepareStatement("SELECT * FROM LIBROS WHERE TITULO = ?");
-			prepareStatement.setString(1, book.getTitle());
+			prepareStatement = conn.prepareStatement("SELECT * FROM LIBROS WHERE isbn = ?");
+			prepareStatement.setInt(1, book.getIsbn());
 			resultSet = prepareStatement.executeQuery();
 			Book foundBook;
 			while(resultSet.next()){

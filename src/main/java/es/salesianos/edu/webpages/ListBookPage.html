@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wicket="http://wicket.apache.org">
+<head>
+<meta charset="UTF-8">
+</head>
+<body>
+<style>
+	th, td{ text-align:center}
+</style>
+
+	<div class="row" style="margin-left:auto">
+		<form wicket:id="formListBook" class="form-group">
+			<div>
+				<input wicket:id="title" class="form-control"
+					placeholder="Introduzca el título de un libro"></input> 
+				<input type="submit" class="btn btn-primary" value="Buscar"/>
+				<input type="submit" wicket:id="allbutton" value="Mostrar todos" />
+    			<input type="submit" wicket:id="cancelbutton" value="Cancelar" />
+    			<input type="submit" wicket:id="returnbutton" value="Volver" />
+			</div>
+		</form>
+	</div>
+
+	<div class="row">
+		<div class="alert-info" wicket:id="feedbackMessage">[feedbackMessage]</div>
+	</div>
+
+	<table border=2 style="margin-left:5%;font-family:bold; width:70%">
+		<th>Código ISBN</th><th>Título del libro</th><th>Autor</th>
+		<div wicket:id="book-group" border=1>
+			<tr><td><span wicket:id="isbn"></span></td><td><span wicket:id="title" ></span></td><td><span wicket:id="authorname"></span></td></tr>
+		</div>
+		
+		<div>
+			<tr><td colspan=4 style="text-align:center"><span wicket:id="empty-list"></span></td></tr>
+		</div>
+		 
+	</table>
+</body>
+</html>
