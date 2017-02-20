@@ -72,7 +72,6 @@ public class BookService {
 		
 		if(search(book).isEmpty()){
 			// No existe en la bd
-			logger.debug("realizando insercion");
 			ResultSet resultSet = null;
 			PreparedStatement prepareStatement = null;
 			Connection conn = manager.open(jdbcUrl);
@@ -102,7 +101,6 @@ public class BookService {
 	}
 	
 	public List searchAll() {
-		logger.debug("realizando seleccion total");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -131,7 +129,6 @@ public class BookService {
 	}
 	
 	public List search(Book book) {
-		logger.debug("realizando seleccion");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -158,7 +155,6 @@ public class BookService {
 	}
 	
 	public List partialSearch(Book book) {
-		logger.debug("realizando seleccion");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -185,7 +181,6 @@ public class BookService {
 	}
 	
 	public List partialSearch(String title) {
-		logger.debug("realizando seleccion");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);

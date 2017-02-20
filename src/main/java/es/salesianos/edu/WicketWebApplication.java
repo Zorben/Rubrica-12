@@ -25,9 +25,6 @@ import es.salesianos.edu.webpages.HomePage;
  * method.
  *
  */
-@Component
-@EnableAutoConfiguration
-@ComponentScan
 @SpringBootApplication
 public class WicketWebApplication extends WebApplication {
 

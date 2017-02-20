@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.hamcrest.core.IsNull;
 
 import es.salesianos.edu.model.Author;
 import es.salesianos.edu.model.Book;
@@ -155,6 +156,7 @@ public class ListBookPage extends WebPage {
 	 *  Comprueba el nombre del libro a buscar por el usuario y recarga la pagina con los parametros, o muestra mensaje de error
 	 */
 	private void checkBookTitleAndFillParameters(Form form) {
+		// si hay titulo
 		if(((Book)form.getModelObject()).getTitle()!=null){
 			PageParameters pageParameters = new PageParameters();
 			pageParameters.add("currentSearchType", "find");

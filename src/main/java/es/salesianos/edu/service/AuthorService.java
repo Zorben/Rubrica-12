@@ -62,7 +62,6 @@ public class AuthorService {
 		
 		if(search(author).isEmpty()){
 			// No existe en la bd
-			logger.debug("realizando insercion");
 			ResultSet resultSet = null;
 			PreparedStatement prepareStatement = null;
 			Connection conn = manager.open(jdbcUrl);
@@ -91,7 +90,6 @@ public class AuthorService {
 	}
 	
 	public List searchAll() {
-		logger.debug("realizando seleccion total");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -118,7 +116,6 @@ public class AuthorService {
 	}
 	
 	public List search(Author author) {
-		logger.debug("realizando seleccion");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -148,7 +145,6 @@ public class AuthorService {
 	}
 	
 	public List partialSearch(Author author) {
-		logger.debug("realizando seleccion parcial");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
@@ -178,7 +174,6 @@ public class AuthorService {
 	}
 	
 	public List partialSearch(String authorName) {
-		logger.debug("realizando seleccion parcial");
 		ResultSet resultSet = null;
 		PreparedStatement prepareStatement = null;
 		Connection conn = manager.open(jdbcUrl);
